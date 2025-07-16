@@ -18,7 +18,7 @@ app.get("/", (c) => {
         Effect.log(`Got ${playlist.tracks.length} tracks`),
       ),
     );
-    const track = yield* getRandomTrack(kv, playlist.tracks).pipe(
+    const track = yield* getRandomTrack(playlist.tracks).pipe(
       Effect.andThen(formatTrackArtists),
     );
     return track;

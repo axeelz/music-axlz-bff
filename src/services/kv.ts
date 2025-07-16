@@ -15,13 +15,6 @@ const getJsonFromKV = <T>(kv: KVNamespace, key: string) =>
       new KVGetError({ message: `Failed to get key ${key}: ${error}` }),
   });
 
-const getTextFromKV = (kv: KVNamespace, key: string) =>
-  Effect.tryPromise({
-    try: () => kv.get(key, "text") as Promise<string | null>,
-    catch: (error) =>
-      new KVGetError({ message: `Failed to get key ${key}: ${error}` }),
-  });
-
 const storeInKV = (
   kv: KVNamespace,
   key: string,
@@ -39,7 +32,6 @@ const storeInKV = (
 export class KVService extends Effect.Service<KVService>()("KVService", {
   effect: Effect.succeed({
     getJsonFromKV,
-    getTextFromKV,
     storeInKV,
   } as const),
 }) {}
