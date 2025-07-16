@@ -1,0 +1,19 @@
+{
+  "name": "music-axlz-bff",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "lint": "biome check",
+    "lint:fix": "biome check --write"
+  },
+  "dependencies": {
+    "hono": "^4.8.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.1.1",
+    "@cloudflare/workers-types": "^4.20250715.0",
+    "wrangler": "^4.4.0"
+  }
+}
