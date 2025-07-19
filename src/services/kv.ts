@@ -13,7 +13,9 @@ const getJsonFromKV = <T>(kv: KVNamespace, key: string) =>
     try: () => kv.get(key, "json") as Promise<T | null>,
     catch: (error) =>
       new KVGetError({ message: `Failed to get key ${key} (${error})` }),
-  });
+  }).pipe(
+    Effect.tapError((err) => Effect.logError(`${err._tag}: ${err.message}`)),
+  );
 
 const storeInKV = (
   kv: KVNamespace,
@@ -27,7 +29,9 @@ const storeInKV = (
       new KVPutError({
         message: `Failed to put key ${key} (${error})`,
       }),
-  });
+  }).pipe(
+    Effect.tapError((err) => Effect.logError(`${err._tag}: ${err.message}`)),
+  );
 
 export class KVService extends Effect.Service<KVService>()("KVService", {
   effect: Effect.succeed({
