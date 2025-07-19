@@ -9,6 +9,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
     "exactOptionalPropertyTypes": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "noErrorTruncation": true
   }
 }
