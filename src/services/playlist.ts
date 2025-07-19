@@ -3,7 +3,7 @@ import {
   HttpClient,
   HttpClientResponse,
 } from "@effect/platform";
-import { Data, Effect, Either, Schedule, Schema } from "effect";
+import { Data, Effect, Schedule, Schema } from "effect";
 import { PLAYLIST_CACHE_KEY, PLAYLIST_CACHE_TTL } from "../utils/constants";
 import { KVService } from "./kv";
 
@@ -36,6 +36,10 @@ class PlaylistParseError extends Data.TaggedError("PlaylistParseError")<{
   message: string;
 }> {}
 
+class EmptyPlaylistError extends Data.TaggedError("EmptyPlaylistError")<{
+  message: string;
+}> {}
+
 const fetchPlaylist = (endpoint: string) =>
   Effect.gen(function* () {
     yield* Effect.log("Fetching fresh playlist");
@@ -58,35 +62,35 @@ const fetchPlaylist = (endpoint: string) =>
     return playlist;
   }).pipe(Effect.provide(FetchHttpClient.layer));
 
-export const getPlaylist = (kv: KVNamespace, endpoint: string) =>
+const getCachedPlaylist = (kv: KVNamespace) =>
   Effect.gen(function* () {
+    yield* Effect.log("Attempting to get cached playlist");
+
     const kvService = yield* KVService;
     const cached = yield* kvService.getJsonFromKV<PlaylistResponse>(
       kv,
       PLAYLIST_CACHE_KEY,
     );
 
-    if (cached) {
-      yield* Effect.log("Attempting to return from cached playlist");
-      const parsedCache = yield* Schema.decodeUnknown(PlaylistResponse)(
-        cached,
-      ).pipe(Effect.either);
+    const validCache = yield* Effect.fromNullable(cached).pipe(
+      Effect.tapError(() => Effect.log("No cached playlist found")),
+    );
 
-      if (Either.isRight(parsedCache)) {
-        yield* Effect.log("Cache was valid, returning");
-        return parsedCache.right;
-      } else {
-        yield* Effect.log("Cache was invalid, failed to parse");
-      }
-    }
-
-    const playlist = yield* fetchPlaylist(endpoint).pipe(
-      Effect.timeout("4 seconds"),
-      Effect.retry(
-        Schedule.exponential(1000).pipe(Schedule.compose(Schedule.recurs(2))),
+    const parsedCache = yield* Schema.decodeUnknown(PlaylistResponse)(
+      validCache,
+    ).pipe(
+      Effect.tap(() => Effect.log("Cache was valid, returning")),
+      Effect.tapError((ParseError) =>
+        Effect.logError(`${ParseError._tag}: Cache was invalid`),
       ),
     );
 
+    return parsedCache;
+  });
+
+const storePlaylistInCache = (kv: KVNamespace, playlist: PlaylistResponse) =>
+  Effect.gen(function* () {
+    const kvService = yield* KVService;
     const encoded = yield* Schema.encode(PlaylistResponse)(playlist).pipe(
       Effect.mapError((_ParseError) => {
         return new PlaylistParseError({
@@ -106,3 +110,25 @@ export const getPlaylist = (kv: KVNamespace, endpoint: string) =>
 
     return playlist;
   });
+
+const validatePlaylist = (playlist: PlaylistResponse) =>
+  playlist.tracks.length === 0
+    ? Effect.fail(new EmptyPlaylistError({ message: "Playlist is empty" }))
+    : Effect.succeed(playlist);
+
+export const getPlaylist = (kv: KVNamespace, endpoint: string) =>
+  getCachedPlaylist(kv).pipe(
+    Effect.orElse(() =>
+      fetchPlaylist(endpoint).pipe(
+        Effect.timeout("4 seconds"),
+        Effect.retry(
+          Schedule.exponential(1000).pipe(Schedule.compose(Schedule.recurs(2))),
+        ),
+        Effect.andThen((playlist) => storePlaylistInCache(kv, playlist)),
+      ),
+    ),
+    Effect.andThen(validatePlaylist),
+    Effect.tap((playlist) =>
+      Effect.log(`Got ${playlist.tracks.length} tracks`),
+    ),
+  );

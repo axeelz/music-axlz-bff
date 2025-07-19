@@ -13,11 +13,7 @@ app.use("*", cors());
 app.get("/", (c) => {
   const program = Effect.gen(function* () {
     const kv = c.env.music_axlz;
-    const playlist = yield* getPlaylist(kv, c.env.SERVICE_URL).pipe(
-      Effect.tap((playlist) =>
-        Effect.log(`Got ${playlist.tracks.length} tracks`),
-      ),
-    );
+    const playlist = yield* getPlaylist(kv, c.env.SERVICE_URL);
     const track = yield* getRandomTrack(playlist.tracks).pipe(
       Effect.andThen(formatTrackArtists),
     );
