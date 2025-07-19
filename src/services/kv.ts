@@ -12,7 +12,7 @@ const getJsonFromKV = <T>(kv: KVNamespace, key: string) =>
   Effect.tryPromise({
     try: () => kv.get(key, "json") as Promise<T | null>,
     catch: (error) =>
-      new KVGetError({ message: `Failed to get key ${key}: ${error}` }),
+      new KVGetError({ message: `Failed to get key ${key} (${error})` }),
   });
 
 const storeInKV = (
@@ -25,7 +25,7 @@ const storeInKV = (
     try: () => kv.put(key, value, options),
     catch: (error) =>
       new KVPutError({
-        message: `Failed to put key ${key}: ${error}`,
+        message: `Failed to put key ${key} (${error})`,
       }),
   });
 
