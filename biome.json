@@ -11,14 +11,14 @@
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
-    "includes": ["**/*.ts", "**/*.json", "!**/*.d.ts", "!.wrangler"]
+    "includes": ["**/*.ts", "**/*.json*", "!**/*.d.ts", "!.wrangler"]
   },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true
     },
-    "includes": ["**/*.ts", "**/*.json", "!**/*.d.ts", "!.wrangler"]
+    "includes": ["**/*.ts", "**/*.json*", "!**/*.d.ts", "!.wrangler"]
   },
   "javascript": {
     "formatter": {
@@ -32,6 +32,6 @@
         "organizeImports": "on"
       }
     },
-    "includes": ["**/*.ts", "**/*.json", "!**/*.d.ts", "!.wrangler"]
+    "includes": ["**/*.ts", "**/*.json*", "!**/*.d.ts", "!.wrangler"]
   }
 }
