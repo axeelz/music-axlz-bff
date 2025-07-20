@@ -61,7 +61,7 @@ const saveQueue = (c: Context, queue: ShuffleQueue) =>
             maxAge: QUEUE_COOKIE_MAX_AGE,
             httpOnly: true,
             secure: true,
-            sameSite: "None",
+            sameSite: "Lax",
           }),
         catch: (error) =>
           new QueueSaveError({ message: `[setCookie] (${error})` }),
