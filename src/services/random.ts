@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { Data, Effect, Schema } from "effect";
 import type { Context } from "hono";
-import { getCookie, setCookie } from "hono/cookie";
+import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { QUEUE_COOKIE_MAX_AGE, QUEUE_COOKIE_NAME } from "../utils/constants";
 import type { Track } from "./playlist";
 
@@ -123,15 +123,15 @@ export const getShuffledTrack = (tracks: readonly Track[], c: Context) =>
 
     yield* saveQueue(c, updatedQueue);
 
-    const remaining =
-      updatedQueue.shuffledIndexes.length - updatedQueue.currentIndex;
-    yield* Effect.log(`${remaining} tracks remaining in the queue`);
-
-    return track;
+    return {
+      ...track,
+      queueStatus: `${updatedQueue.currentIndex}/${updatedQueue.shuffledIndexes.length}`,
+    };
   }).pipe(
     Effect.catchAll((error) =>
       Effect.gen(function* () {
         yield* Effect.logError(`${error._tag}: falling back to random`);
+        yield* Effect.sync(() => deleteCookie(c, QUEUE_COOKIE_NAME));
         const randomIndex = crypto.randomInt(tracks.length);
         return tracks[randomIndex];
       }),
