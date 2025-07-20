@@ -123,10 +123,10 @@ export const getShuffledTrack = (tracks: readonly Track[], c: Context) =>
 
     yield* saveQueue(c, updatedQueue);
 
-    return {
-      ...track,
-      queueStatus: `${updatedQueue.currentIndex}/${updatedQueue.shuffledIndexes.length}`,
-    };
+    const queueStatus = `${updatedQueue.currentIndex}/${updatedQueue.shuffledIndexes.length}`;
+    yield* Effect.log(`Queue status: ${queueStatus}`);
+
+    return { ...track, queueStatus };
   }).pipe(
     Effect.catchAll((error) =>
       Effect.gen(function* () {
