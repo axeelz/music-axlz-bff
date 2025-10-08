@@ -10,14 +10,14 @@
     "logs": "wrangler tail"
   },
   "dependencies": {
-    "@effect/platform": "^0.90.7",
-    "effect": "^3.17.13",
-    "hono": "^4.9.6"
+    "@effect/platform": "^0.92.1",
+    "effect": "^3.18.4",
+    "hono": "^4.9.10"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.2",
-    "@cloudflare/workers-types": "^4.20250906.0",
-    "@types/node": "^24.3.1",
-    "wrangler": "^4.34.0"
+    "@biomejs/biome": "2.2.5",
+    "@cloudflare/workers-types": "^4.20251004.0",
+    "@types/node": "^24.7.0",
+    "wrangler": "^4.42.1"
   }
 }
