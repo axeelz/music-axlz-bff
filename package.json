@@ -12,7 +12,7 @@
   "dependencies": {
     "@effect/platform": "^0.92.1",
     "effect": "^3.18.4",
-    "hono": "^4.9.10"
+    "hono": "^4.10.3"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.5",
