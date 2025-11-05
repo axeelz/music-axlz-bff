@@ -11,13 +11,13 @@
   },
   "dependencies": {
     "@effect/platform": "^0.92.1",
-    "effect": "^3.18.4",
-    "hono": "^4.9.10"
+    "effect": "^3.19.0",
+    "hono": "^4.10.4"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.5",
-    "@cloudflare/workers-types": "^4.20251004.0",
-    "@types/node": "^24.7.0",
-    "wrangler": "^4.42.1"
+    "@cloudflare/workers-types": "^4.20251014.0",
+    "@types/node": "^24.10.0",
+    "wrangler": "^4.45.4"
   }
 }
