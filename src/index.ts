@@ -11,7 +11,7 @@ const app = new Hono<{ Bindings: CloudflareBindings }>();
 app.use(
   "*",
   cors({
-    origin: ["https://axeelz.com", "http://localhost:5173", "http://localhost:4321"],
+    origin: ["https://axeelz.com", "http://localhost:5173", "http://localhost:3000"],
     credentials: true,
   }),
 );
