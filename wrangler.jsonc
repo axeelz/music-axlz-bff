@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "music-axlz-bff",
-  "compatibility_date": "2026-01-08",
+  "compatibility_date": "2026-06-24",
   "main": "src/index.ts",
   "minify": true,
   "compatibility_flags": ["nodejs_compat"],

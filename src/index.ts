@@ -11,12 +11,23 @@ const app = new Hono<{ Bindings: CloudflareBindings }>();
 app.use(
   "*",
   cors({
-    origin: ["https://axeelz.com", "http://localhost:5173", "http://localhost:3000"],
+    origin: [
+      "https://axeelz.com",
+      "http://localhost:5173",
+      "http://localhost:3000",
+    ],
     credentials: true,
   }),
 );
 
 app.get("/", (c) => {
+  if (!c.env.SERVICE_URL) {
+    return c.json(
+      { error: "ConfigError", message: "SERVICE_URL is not set" },
+      500,
+    );
+  }
+
   const program = Effect.gen(function* () {
     const kv = c.env.music_axlz;
     const playlist = yield* getPlaylist(kv, c.env.SERVICE_URL);
