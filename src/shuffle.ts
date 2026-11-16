@@ -24,9 +24,7 @@ export const nextTrack = <T extends { uri: string }>(
   const hash = Hash.string(tracks.map((t) => t.uri).join("|"));
   const [index, ...remaining] = Option.match(saved, {
     onSome: (q) =>
-      q.hash === hash &&
-      q.remaining.length > 0 &&
-      q.remaining.every((i) => i < tracks.length)
+      q.hash === hash && q.remaining.length > 0 && q.remaining.every((i) => i < tracks.length)
         ? q.remaining
         : shuffle(tracks.length),
     onNone: () => shuffle(tracks.length),

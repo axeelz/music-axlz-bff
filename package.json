@@ -6,17 +6,19 @@
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "build": "tsc --noEmit",
-    "lint": "biome check",
-    "lint:fix": "biome check --write",
-    "logs": "wrangler tail"
+    "lint": "oxlint",
+    "logs": "wrangler tail",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
   },
   "dependencies": {
     "effect": "4.1.4",
     "hono": "^4.13.18"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.6.8",
     "@cloudflare/workers-types": "^5.20261115.1",
+    "oxfmt": "0.78.0",
+    "oxlint": "1.93.0",
     "typescript": "^7.0.2",
     "wrangler": "^4.162.0"
   }
