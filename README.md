@@ -1,21 +1,11 @@
-```txt
-npm install
-npm run dev
+# music-axlz-bff
+
+Cloudflare Worker serving a shuffled track from a playlist for [axeelz.com](https://axeelz.com). The playlist is cached in KV, the shuffle queue lives in a cookie.
+
+```sh
+bun install
+echo "SERVICE_URL=<playlist endpoint>" > .env
+bun dev
 ```
 
-```txt
-npm run deploy
-```
-
-[For generating/synchronizing types based on your Worker configuration run](https://developers.cloudflare.com/workers/wrangler/commands/#types):
-
-```txt
-npm run cf-typegen
-```
-
-Pass the `CloudflareBindings` as generics when instantiation `Hono`:
-
-```ts
-// src/index.ts
-const app = new Hono<{ Bindings: CloudflareBindings }>();
-```
+`bun run cf-typegen` after changing `wrangler.jsonc`.
