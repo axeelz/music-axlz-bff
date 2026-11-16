@@ -1,15 +1,20 @@
-import { Effect, Logger } from "effect";
+import { Effect, Schema } from "effect";
 import { Hono } from "hono";
+import { getCookie, setCookie } from "hono/cookie";
 import { cors } from "hono/cors";
-import { KVService } from "./services/kv";
-import { getPlaylist } from "./services/playlist";
-import { getShuffledTrack } from "./services/random";
-import { formatTrackArtists, toErrorResponse } from "./utils/format";
+import { getPlaylist, type Track } from "./playlist";
+import { nextTrack, Queue } from "./shuffle";
+
+const QUEUE_COOKIE = "shuffle_queue";
+
+const formatArtists = ({ artists }: Track) =>
+  artists.length <= 2
+    ? artists.join(" & ")
+    : `${artists.slice(0, -1).join(", ")} & ${artists.at(-1)}`;
 
 const app = new Hono<{ Bindings: CloudflareBindings }>();
 
 app.use(
-  "*",
   cors({
     origin: [
       "https://axeelz.com",
@@ -20,33 +25,30 @@ app.use(
   }),
 );
 
-app.get("/", (c) => {
-  if (!c.env.SERVICE_URL) {
-    return c.json(
-      { error: "ConfigError", message: "SERVICE_URL is not set" },
-      500,
-    );
-  }
-
-  const program = Effect.gen(function* () {
-    const kv = c.env.music_axlz;
-    const playlist = yield* getPlaylist(kv, c.env.SERVICE_URL);
-    const track = yield* getShuffledTrack(playlist.tracks, c).pipe(
-      Effect.andThen(formatTrackArtists),
-    );
-    return track;
-  });
-
-  return Effect.runPromise(
-    program.pipe(
-      Effect.provide(Logger.pretty),
-      Effect.provide(KVService.Default),
-      Effect.match({
-        onSuccess: (track) => c.json(track),
-        onFailure: (error) => c.json(toErrorResponse(error), 500),
-      }),
-    ),
-  );
-});
+app.get("/", (c) =>
+  getPlaylist(c.env).pipe(
+    Effect.map(({ tracks }) => {
+      const saved = Schema.decodeUnknownOption(Queue)(
+        getCookie(c, QUEUE_COOKIE),
+      );
+      const { track, queue, status } = nextTrack(tracks, saved);
+      setCookie(c, QUEUE_COOKIE, Schema.encodeSync(Queue)(queue), {
+        maxAge: 3600,
+        httpOnly: true,
+        secure: true,
+        sameSite: "Lax",
+      });
+      return { ...track, artist: formatArtists(track), queueStatus: status };
+    }),
+    Effect.tap(({ queueStatus }) => Effect.log(`Queue status: ${queueStatus}`)),
+    Effect.tapError(Effect.logError),
+    Effect.match({
+      onFailure: (error) =>
+        c.json({ error: error._tag, message: error.message }, 500),
+      onSuccess: (track) => c.json(track),
+    }),
+    Effect.runPromise,
+  ),
+);
 
 export default app;

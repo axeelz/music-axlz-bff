@@ -11,15 +11,13 @@
     "logs": "wrangler tail"
   },
   "dependencies": {
-    "@effect/platform": "^0.96.2",
-    "effect": "^3.21.4",
-    "hono": "^4.12.26"
+    "effect": "4.1.4",
+    "hono": "^4.13.18"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.0",
-    "@cloudflare/workers-types": "^4.20260621.1",
-    "@types/node": "^26.0.0",
-    "typescript": "^6.0.3",
-    "wrangler": "^4.103.0"
+    "@biomejs/biome": "^2.6.8",
+    "@cloudflare/workers-types": "^5.20261115.1",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.162.0"
   }
 }
