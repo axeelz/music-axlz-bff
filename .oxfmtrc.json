@@ -1,0 +1,4 @@
+{
+  "ignorePatterns": ["worker-configuration.d.ts"],
+  "sortImports": true
+}
