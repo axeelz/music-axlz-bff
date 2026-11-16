@@ -10,9 +10,9 @@
   "kv_namespaces": [
     {
       "binding": "music_axlz",
-      "id": "4d44215cb6644dbc8895ae3587688186"
-    }
-  ]
+      "id": "4d44215cb6644dbc8895ae3587688186",
+    },
+  ],
   // "r2_buckets": [
   //   {
   //     "binding": "MY_BUCKET",
