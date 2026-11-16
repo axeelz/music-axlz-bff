@@ -6,8 +6,6 @@
     "strict": true,
     "skipLibCheck": true,
     "lib": ["ESNext"],
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
     "exactOptionalPropertyTypes": true,
     "verbatimModuleSyntax": true,
     "noErrorTruncation": true
